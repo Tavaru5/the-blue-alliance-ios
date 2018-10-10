@@ -6,6 +6,8 @@ import FirebaseRemoteConfig
 class TeamViewController: ContainerViewController, Observable {
 
     private let team: Team
+    private let urlOpener: URLOpener
+    private let userDefaults: UserDefaults
 
     private let eventsViewController: TeamEventsViewController
     // private let mediaViewController: TeamMediaCollectionViewController
@@ -36,9 +38,11 @@ class TeamViewController: ContainerViewController, Observable {
 
     // MARK: Init
 
-    init(team: Team, remoteConfig: RemoteConfig, urlOpener: URLOpener, persistentContainer: NSPersistentContainer) {
+    init(team: Team, remoteConfig: RemoteConfig, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.team = team
         self.year = TeamViewController.latestYear(remoteConfig: remoteConfig, years: team.yearsParticipated)
+        self.urlOpener = urlOpener
+        self.userDefaults = userDefaults
 
         let infoViewController = TeamInfoViewController(team: team, urlOpener: urlOpener, persistentContainer: persistentContainer)
         eventsViewController = TeamEventsViewController(team: team, year: year, persistentContainer: persistentContainer)
@@ -165,7 +169,7 @@ extension TeamViewController: SelectTableViewControllerDelegate {
 extension TeamViewController: EventsViewControllerDelegate {
 
     func eventSelected(_ event: Event) {
-        let teamAtEventViewController = TeamAtEventViewController(team: team, event: event, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: team, event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 

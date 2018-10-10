@@ -4,12 +4,14 @@ import UIKit
 class EventViewController: ContainerViewController {
 
     private let event: Event
+    private let urlOpener: URLOpener
     private let userDefaults: UserDefaults
 
     // MARK: - Init
 
     init(event: Event, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.event = event
+        self.urlOpener = urlOpener
         self.userDefaults = userDefaults
 
         let infoViewController = EventInfoViewController(event: event, urlOpener: urlOpener, persistentContainer: persistentContainer)
@@ -51,22 +53,22 @@ class EventViewController: ContainerViewController {
 extension EventViewController: EventInfoViewControllerDelegate {
 
     func showAlliances() {
-        let eventAlliancesViewController = EventAlliancesContainerViewController(event: event, persistentContainer: persistentContainer)
+        let eventAlliancesViewController = EventAlliancesContainerViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(eventAlliancesViewController, animated: true)
     }
 
     func showAwards() {
-        let eventAwardsViewController = EventAwardsContainerViewController(event: event, persistentContainer: persistentContainer)
+        let eventAwardsViewController = EventAwardsContainerViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(eventAwardsViewController, animated: true)
     }
 
     func showDistrictPoints() {
-        let eventDistrictPointsViewController = EventDistrictPointsContainerViewController(event: event, persistentContainer: persistentContainer)
+        let eventDistrictPointsViewController = EventDistrictPointsContainerViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(eventDistrictPointsViewController, animated: true)
     }
 
     func showStats() {
-        let eventStatsContainerViewController = EventStatsContainerViewController(event: event, userDefaults: userDefaults, persistentContainer: persistentContainer)
+        let eventStatsContainerViewController = EventStatsContainerViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(eventStatsContainerViewController, animated: true)
     }
 
@@ -75,7 +77,7 @@ extension EventViewController: EventInfoViewControllerDelegate {
 extension EventViewController: TeamsViewControllerDelegate {
 
     func teamSelected(_ team: Team) {
-        let teamAtEventViewController = TeamAtEventViewController(team: team, event: event, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: team, event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 
@@ -84,7 +86,7 @@ extension EventViewController: TeamsViewControllerDelegate {
 extension EventViewController: EventRankingsViewControllerDelegate {
 
     func rankingSelected(_ ranking: EventRanking) {
-        let teamAtEventViewController = TeamAtEventViewController(team: ranking.team!, event: event, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: ranking.team!, event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 
@@ -93,7 +95,7 @@ extension EventViewController: EventRankingsViewControllerDelegate {
 extension EventViewController: MatchesViewControllerDelegate {
 
     func matchSelected(_ match: Match) {
-        let matchViewController = MatchContainerViewController(match: match, persistentContainer: persistentContainer)
+        let matchViewController = MatchContainerViewController(match: match, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(matchViewController, animated: true)
     }
 

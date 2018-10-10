@@ -6,6 +6,8 @@ import UIKit
 class EventStatsContainerViewController: ContainerViewController {
 
     private let event: Event
+    private let urlOpener: URLOpener
+    private let userDefaults: UserDefaults
 
     private let teamStatsViewController: EventTeamStatsTableViewController
 
@@ -18,8 +20,10 @@ class EventStatsContainerViewController: ContainerViewController {
 
     // MARK: - Init
 
-    init(event: Event, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
+    init(event: Event, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.event = event
+        self.urlOpener = urlOpener
+        self.userDefaults = userDefaults
 
         teamStatsViewController = EventTeamStatsTableViewController(event: event, userDefaults: userDefaults, persistentContainer: persistentContainer)
 
@@ -38,6 +42,7 @@ class EventStatsContainerViewController: ContainerViewController {
         navigationTitle = "Stats"
         navigationSubtitle = "@ \(event.friendlyNameWithYear)"
 
+        navigationTitleDelegate = self
         teamStatsViewController.delegate = self
     }
 
@@ -76,6 +81,20 @@ class EventStatsContainerViewController: ContainerViewController {
 
 }
 
+extension EventStatsContainerViewController: NavigationTitleDelegate {
+
+    func navigationTitleTapped() {
+        // Don't push to event if we just came from an Event
+        if pushedFromEventViewController {
+            return
+        }
+
+        let eventViewController = EventViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
+        self.navigationController?.pushViewController(eventViewController, animated: true)
+    }
+
+}
+
 extension EventStatsContainerViewController: SelectTableViewControllerDelegate {
 
     typealias OptionType = EventTeamStatFilter
@@ -93,7 +112,7 @@ extension EventStatsContainerViewController: SelectTableViewControllerDelegate {
 extension EventStatsContainerViewController: EventTeamStatsSelectionDelegate {
 
     func eventTeamStatSelected(_ eventTeamStat: EventTeamStat) {
-        let teamAtEventViewController = TeamAtEventViewController(team: eventTeamStat.team!, event: event, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: eventTeamStat.team!, event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 

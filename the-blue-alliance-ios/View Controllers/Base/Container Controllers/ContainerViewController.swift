@@ -156,7 +156,24 @@ class ContainerViewController: UIViewController, Persistable, Alertable {
         return nil
     }
 
+    var pushedFromEventViewController: Bool {
+        return previousViewController is EventViewController
+    }
+
     // MARK: - Private Methods
+
+    private var previousViewController: UIViewController? {
+        guard let navigationController = navigationController else {
+            return nil
+        }
+
+        let index = navigationController.viewControllers.count - 2
+        if index < 0 || index >= navigationController.viewControllers.count {
+            return nil
+        }
+
+        return navigationController.viewControllers[index]
+    }
 
     @objc private func segmentedControlValueChanged() {
         updateSegmentedControlViews()

@@ -6,12 +6,16 @@ class TeamAtEventViewController: ContainerViewController {
 
     private let team: Team
     private let event: Event
+    private let urlOpener: URLOpener
+    private let userDefaults: UserDefaults
 
     // MARK: - Init
 
-    init(team: Team, event: Event, persistentContainer: NSPersistentContainer) {
+    init(team: Team, event: Event, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.team = team
         self.event = event
+        self.urlOpener = urlOpener
+        self.userDefaults = userDefaults
 
         let summaryViewController: TeamSummaryViewController = TeamSummaryViewController(team: team, event: event, persistentContainer: persistentContainer)
         let matchesViewController: MatchesViewController = MatchesViewController(event: event, team: team, persistentContainer: persistentContainer)
@@ -25,6 +29,7 @@ class TeamAtEventViewController: ContainerViewController {
         navigationTitle = "Team \(team.teamNumber)"
         navigationSubtitle = "@ \(event.friendlyNameWithYear)"
 
+        navigationTitleDelegate = self
         summaryViewController.delegate = self
         matchesViewController.delegate = self
         awardsViewController.delegate = self
@@ -36,15 +41,29 @@ class TeamAtEventViewController: ContainerViewController {
 
 }
 
+extension TeamAtEventViewController: NavigationTitleDelegate {
+
+    func navigationTitleTapped() {
+        // Don't push to event if we just came from an Event
+        if pushedFromEventViewController {
+            return
+        }
+
+        let eventViewController = EventViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
+        self.navigationController?.pushViewController(eventViewController, animated: true)
+    }
+
+}
+
 extension TeamAtEventViewController: MatchesViewControllerDelegate, TeamSummaryViewControllerDelegate {
 
     func awardsSelected() {
-        let awardsViewController = EventAwardsContainerViewController(event: event, team: team, persistentContainer: persistentContainer)
+        let awardsViewController = EventAwardsContainerViewController(event: event, team: team, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(awardsViewController, animated: true)
     }
 
     func matchSelected(_ match: Match) {
-        let matchViewController = MatchContainerViewController(match: match, team: team, persistentContainer: persistentContainer)
+        let matchViewController = MatchContainerViewController(match: match, team: team, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(matchViewController, animated: true)
     }
 
@@ -58,7 +77,7 @@ extension TeamAtEventViewController: EventAwardsViewControllerDelegate {
             return
         }
 
-        let teamAtEventViewController = TeamAtEventViewController(team: team, event: event, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: team, event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 

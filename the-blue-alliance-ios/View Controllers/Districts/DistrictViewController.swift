@@ -62,7 +62,7 @@ extension DistrictViewController: EventsViewControllerDelegate {
 extension DistrictViewController: DistrictRankingsViewControllerDelegate {
 
     func districtRankingSelected(_ districtRanking: DistrictRanking) {
-        let teamAtDistrictViewController = TeamAtDistrictViewController(ranking: districtRanking, persistentContainer: persistentContainer)
+        let teamAtDistrictViewController = TeamAtDistrictViewController(ranking: districtRanking, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtDistrictViewController, animated: true)
     }
 

@@ -6,13 +6,17 @@ import CoreData
 class EventAlliancesContainerViewController: ContainerViewController {
 
     private let event: Event
+    private let urlOpener: URLOpener
+    private let userDefaults: UserDefaults
 
     private var alliancesViewController: EventAlliancesViewController!
 
     // MARK: - Init
 
-    init(event: Event, persistentContainer: NSPersistentContainer) {
+    init(event: Event, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.event = event
+        self.urlOpener = urlOpener
+        self.userDefaults = userDefaults
 
         let alliancesViewController = EventAlliancesViewController(event: event, persistentContainer: persistentContainer)
 
@@ -22,6 +26,7 @@ class EventAlliancesContainerViewController: ContainerViewController {
         navigationTitle = "Alliances"
         navigationSubtitle = "@ \(event.friendlyNameWithYear)"
 
+        navigationTitleDelegate = self
         alliancesViewController.delegate = self
     }
 
@@ -31,10 +36,24 @@ class EventAlliancesContainerViewController: ContainerViewController {
 
 }
 
+extension EventAlliancesContainerViewController: NavigationTitleDelegate {
+
+    func navigationTitleTapped() {
+        // Don't push to event if we just came from an Event
+        if pushedFromEventViewController {
+            return
+        }
+
+        let eventViewController = EventViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
+        self.navigationController?.pushViewController(eventViewController, animated: true)
+    }
+
+}
+
 extension EventAlliancesContainerViewController: EventAlliancesViewControllerDelegate {
 
     func teamSelected(_ team: Team) {
-        let teamAtEventViewController = TeamAtEventViewController(team: team, event: self.event, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: team, event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 

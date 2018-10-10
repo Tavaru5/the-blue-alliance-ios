@@ -5,13 +5,17 @@ import UIKit
 class TeamAtDistrictViewController: ContainerViewController {
 
     private let ranking: DistrictRanking
+    private let urlOpener: URLOpener
+    private let userDefaults: UserDefaults
 
     private var summaryViewController: DistrictTeamSummaryViewController!
 
     // MARK: Init
 
-    init(ranking: DistrictRanking, persistentContainer: NSPersistentContainer) {
+    init(ranking: DistrictRanking, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.ranking = ranking
+        self.urlOpener = urlOpener
+        self.userDefaults = userDefaults
 
         let summaryViewController = DistrictTeamSummaryViewController(ranking: ranking, persistentContainer: persistentContainer)
         let breakdownViewController = DistrictBreakdownViewController(ranking: ranking, persistentContainer: persistentContainer)
@@ -36,7 +40,7 @@ extension TeamAtDistrictViewController: DistrictTeamSummaryViewControllerDelegat
 
     func eventPointsSelected(_ eventPoints: DistrictEventPoints) {
         // TODO: Let's see what we can to do not force-unwrap these from Core Data
-        let teamAtEventViewController = TeamAtEventViewController(team: eventPoints.team!, event: eventPoints.event!, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: eventPoints.team!, event: eventPoints.event!, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 

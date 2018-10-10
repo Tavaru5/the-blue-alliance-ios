@@ -6,11 +6,15 @@ import TBAKit
 class EventDistrictPointsContainerViewController: ContainerViewController {
 
     private var event: Event
+    private let urlOpener: URLOpener
+    private let userDefaults: UserDefaults
 
     // MARK: - Init
 
-    init(event: Event, persistentContainer: NSPersistentContainer) {
+    init(event: Event, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.event = event
+        self.urlOpener = urlOpener
+        self.userDefaults = userDefaults
 
         let districtPointsViewController = EventDistrictPointsViewController(event: event, persistentContainer: persistentContainer)
 
@@ -20,6 +24,7 @@ class EventDistrictPointsContainerViewController: ContainerViewController {
         navigationTitle = "District Points"
         navigationSubtitle = "@ \(event.friendlyNameWithYear)"
 
+        navigationTitleDelegate = self
         districtPointsViewController.delegate = self
     }
 
@@ -29,10 +34,24 @@ class EventDistrictPointsContainerViewController: ContainerViewController {
 
 }
 
+extension EventDistrictPointsContainerViewController: NavigationTitleDelegate {
+
+    func navigationTitleTapped() {
+        // Don't push to event if we just came from an Event
+        if pushedFromEventViewController {
+            return
+        }
+
+        let eventViewController = EventViewController(event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
+        self.navigationController?.pushViewController(eventViewController, animated: true)
+    }
+
+}
+
 extension EventDistrictPointsContainerViewController: EventDistrictPointsViewControllerDelegate {
 
     func districtEventPointsSelected(_ districtEventPoints: DistrictEventPoints) {
-        let teamAtEventViewController = TeamAtEventViewController(team: districtEventPoints.team!, event: event, persistentContainer: persistentContainer)
+        let teamAtEventViewController = TeamAtEventViewController(team: districtEventPoints.team!, event: event, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         self.navigationController?.pushViewController(teamAtEventViewController, animated: true)
     }
 

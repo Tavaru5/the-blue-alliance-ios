@@ -11,6 +11,7 @@ class TeamsContainerViewController_TestCase: TBATestCase {
 
         teamsContainerViewController = TeamsContainerViewController(remoteConfig: remoteConfig,
                                                                     urlOpener: urlOpener,
+                                                                    userDefaults: userDefaults,
                                                                     persistentContainer: persistentContainer)
         navigationController = MockNavigationController(rootViewController: teamsContainerViewController)
 

@@ -7,14 +7,16 @@ import UIKit
 class TeamsContainerViewController: ContainerViewController {
 
     private let remoteConfig: RemoteConfig
+    private let userDefaults: UserDefaults
     private let urlOpener: URLOpener
 
     private(set) var teamsViewController: TeamsViewController!
 
     // MARK: - Init
 
-    init(remoteConfig: RemoteConfig, urlOpener: URLOpener, persistentContainer: NSPersistentContainer) {
+    init(remoteConfig: RemoteConfig, urlOpener: URLOpener, userDefaults: UserDefaults, persistentContainer: NSPersistentContainer) {
         self.remoteConfig = remoteConfig
+        self.userDefaults = userDefaults
         self.urlOpener = urlOpener
 
         teamsViewController = TeamsViewController(persistentContainer: persistentContainer)
@@ -38,7 +40,7 @@ extension TeamsContainerViewController: TeamsViewControllerDelegate {
 
     func teamSelected(_ team: Team) {
         // Show detail wrapped in a UINavigationController for our split view controller
-        let teamViewController = TeamViewController(team: team, remoteConfig: remoteConfig, urlOpener: urlOpener, persistentContainer: persistentContainer)
+        let teamViewController = TeamViewController(team: team, remoteConfig: remoteConfig, urlOpener: urlOpener, userDefaults: userDefaults, persistentContainer: persistentContainer)
         let nav = UINavigationController(rootViewController: teamViewController)
         navigationController?.showDetailViewController(nav, sender: nil)
     }
