@@ -36,6 +36,11 @@ Run unit tests (for CI)
 fastlane ios test
 ```
 Run all of our tests
+### ios screenshot
+```
+fastlane ios screenshot
+```
+Generate screenshots for App Store
 ### ios setup_secrets
 ```
 fastlane ios setup_secrets
